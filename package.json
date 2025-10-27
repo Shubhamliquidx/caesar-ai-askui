@@ -1,0 +1,30 @@
+{
+  "name": "caesar-ai-askui",
+  "version": "1.0.0",
+  "description": "Caesar AI automation project using AskUI",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "askui": "askui-shell",
+    "launch:pixelmon": "adb shell monkey -p com.PixelPalsStudio.PixelmonTCG -c android.intent.category.LAUNCHER 1"
+  },
+  "keywords": [
+    "askui",
+    "caesar-ai",
+    "automation",
+    "testing"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "askui": "latest",
+    "@types/jest": "^29.5.0",
+    "@types/node": "^20.0.0",
+    "dotenv": "^16.0.0",
+    "jest": "^29.5.0",
+    "ts-jest": "^29.1.0",
+    "ts-node": "^10.9.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {}
+}
