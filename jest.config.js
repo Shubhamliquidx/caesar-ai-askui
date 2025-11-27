@@ -1,7 +1,8 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
-  testMatch: ['**/test/**/*.test.ts'],
+  // Support both lowercase and uppercase test filenames
+  testMatch: ['**/test/**/*.test.ts', '**/test/**/*.TEST.TS'],
   collectCoverage: false,
   coverageDirectory: 'coverage',
   coveragePathIgnorePatterns: ['/node_modules/'],
