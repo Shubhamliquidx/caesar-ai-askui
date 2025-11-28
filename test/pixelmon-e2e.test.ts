@@ -32,6 +32,17 @@ describe('Pixelmon TCG - End-to-End Test Suite', () => {
     await aui.waitFor(8000).exec();
   });
 
+  afterAll(async () => {
+    // Force stop the app after all tests are complete
+    console.log(':octagonal_sign: Stopping Pixelmon TCG app after all E2E tests...');
+    try {
+      execSync('adb shell am force-stop com.PixelPalsStudio.PixelmonTCG.Stg', { encoding: 'utf-8' });
+      console.log(':white_check_mark: App force-stopped successfully');
+    } catch (error) {
+      console.log(':warning: Error stopping app:', error);
+    }
+  });
+
 
   // ========== PART 1: LOGIN FLOW TESTS ==========
   
