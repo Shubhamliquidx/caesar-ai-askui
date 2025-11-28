@@ -14,8 +14,7 @@ import { execSync } from 'child_process';
  * 5. Profile Flow Tests (from pixelmon-profile.test.ts) - Assumes MAIN SCREEN, ends on MAIN SCREEN
  * 6. Mail Flow Tests (from pixelmon-mail.test.ts) - Assumes MAIN SCREEN, ends on MAIN SCREEN
  * 7. Game Mode Flow Tests (from pixelmon-gamemode.test.ts) - Assumes MAIN SCREEN, ends on MAIN SCREEN
- * 8. Shop Flow Tests (from pixelmon-shop.test.ts) - Assumes MAIN SCREEN, ends on SHOP SCREEN
- * 9. KILL APP (final cleanup in afterAll)
+ * 8. Shop Flow Tests (from pixelmon-shop.test.ts) - Assumes MAIN SCREEN, ends on MAIN SCREEN
  * 
  * Note: Each test suite ensures the app is in the correct state for the next test suite.
  */
@@ -30,16 +29,6 @@ describe('Pixelmon TCG - End-to-End Test Suite', () => {
     await aui.waitFor(8000).exec();
   });
 
-  afterAll(async () => {
-    // Force stop the app after all tests are complete
-    console.log('🛑 Stopping Pixelmon TCG app after all E2E tests...');
-    try {
-      execSync('adb shell am force-stop com.PixelPalsStudio.PixelmonTCG.Stg', { encoding: 'utf-8' });
-      console.log('✅ App force-stopped successfully');
-    } catch (error) {
-      console.log('⚠️ Error stopping app:', error);
-    }
-  });
 
   // ========== PART 1: LOGIN FLOW TESTS ==========
   
@@ -2634,7 +2623,56 @@ describe('Pixelmon TCG - End-to-End Test Suite', () => {
       expect(hasPackImages).toBe(true);
       console.log('✅ Pack images/visual elements verified');
       
-      console.log('✅ Test completed successfully - all three shop sections with complete UI elements verified!');
+      // ========== NAVIGATE BACK TO MAIN SCREEN ==========
+      
+      // Click on the turquoise/teal glowing diamond-shaped crystal icon to return to main screen
+      console.log('💎 Navigating back to main screen by clicking turquoise diamond icon...');
+      await aui.waitFor(2000).exec();
+      
+      // Look for the turquoise/teal glowing diamond-shaped crystal icon
+      // It is centered near the bottom-middle of the screen (below the PLAY button)
+      // Features: bright cyan/teal color, 3D diamond/gem shape with four triangular faces, glowing outer aura, golden/star-like pattern behind it
+      await aui.act('Look at the screen and identify the turquoise/teal glowing diamond-shaped crystal icon. This icon has these distinguishing features: A bright cyan/teal color, a 3D diamond/gem shape with four triangular faces, a glowing outer aura, a golden/star-like pattern behind it, and it is centered near the bottom-middle of the screen UI (below the PLAY button). Find this exact icon on the screen and click directly at its center. If multiple similar shapes exist, choose the one that has the brightest teal glow, is the largest diamond-shaped object, and has a 4-point symmetrical geometry.');
+      await aui.waitFor(3000).exec();
+      console.log('✅ Clicked turquoise diamond icon');
+      
+      // Verify we're back on main screen/homepage
+      console.log('🏠 Verifying return to main screen...');
+      let isOnMainScreen = false;
+      let hasPlayButton = false;
+      
+      for (let i = 0; i < 5; i++) {
+        console.log(`   Checking main screen (attempt ${i + 1}/5)...`);
+        
+        // Check for Play button
+        hasPlayButton = await aui.ask(
+          'Do you see a button labeled "Play" on the home screen?',
+          { json_schema: { type: 'boolean' } }
+        );
+        
+        // Check if we're on homepage
+        const isOnHomePage = await aui.ask(
+          'Are you on the home page or main screen of the Pixelmon TCG app?',
+          { json_schema: { type: 'boolean' } }
+        );
+        
+        const isNotOnShopScreen = await aui.ask(
+          'Are you no longer on the Shop screen?',
+          { json_schema: { type: 'boolean' } }
+        );
+        
+        if (hasPlayButton && isOnHomePage && isNotOnShopScreen) {
+          isOnMainScreen = true;
+          console.log('✅ Successfully returned to main screen!');
+          break;
+        }
+        
+        await aui.waitFor(2000).exec();
+      }
+      
+      expect(isOnMainScreen).toBe(true);
+      expect(hasPlayButton).toBe(true);
+      console.log('✅ Test completed successfully - all three shop sections verified and returned to main screen!');
     }, 600000);
 
   });
